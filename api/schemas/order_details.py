@@ -21,7 +21,8 @@ class OrderDetailUpdate(BaseModel):
 class OrderDetail(OrderDetailBase):
     id: int
     order_id: int
-    sandwich: Sandwich = None
+    sandwich: Optional[Sandwich] = None
+    delivery: bool
 
     class ConfigDict:
         from_attributes = True

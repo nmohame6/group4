@@ -22,3 +22,4 @@ class Sandwich(SandwichBase):
 
     class ConfigDict:
         from_attributes = True
+        

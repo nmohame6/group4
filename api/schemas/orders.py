@@ -21,6 +21,7 @@ class OrderUpdate(BaseModel):
 
 class Order(OrderBase):
     id: int
+    address: str
     order_date: Optional[datetime] = None
     order_details: list[OrderDetail] = None
 
