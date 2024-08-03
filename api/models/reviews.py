@@ -5,7 +5,7 @@ from ..dependencies.database import Base
 
 
 class Review(Base):
-    __tablename__ = "review"
+    __tablename__ = "reviews"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     order_id = Column(Integer, ForeignKey("orders.id"))
