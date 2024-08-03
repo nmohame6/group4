@@ -6,3 +6,4 @@ pytest
 pytest-mock
 httpx
 cryptography
+undefined==0.0.8
