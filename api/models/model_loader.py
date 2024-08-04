@@ -1,6 +1,7 @@
 from . import orders, order_details, recipes, sandwiches, resources, payments, reviews, promos
 
 from ..dependencies.database import engine
+from ..dependencies.database import Base
 
 
 def index():
