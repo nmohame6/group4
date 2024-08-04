@@ -14,5 +14,5 @@ class Order(Base):
     description = Column(String(300))
 
     order_details = relationship("OrderDetail", back_populates="order")
-    payments = relationship("Payment", back_populate="order")
-    reviews = relationship("Review", back_populate="order")
+    payments = relationship("Payment", back_populates="order")
+    reviews = relationship("Review", back_populates="order")
