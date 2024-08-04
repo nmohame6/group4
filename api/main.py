@@ -7,7 +7,7 @@ from .schemas import order_details, orders, payments, promos, recipes, resources
 from .controllers import orders, order_details, payments, promos, recipes, resources, reviews, sandwiches
 from .dependencies.database import engine, get_db
 
-model_loader.Base.metadata.create_all(bind=engine)
+models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
@@ -22,7 +22,7 @@ app.add_middleware(
 )
 
 
-## endpoints for orders
+# endpoints for orders
 @app.post("/orders/", response_model=schemas.Order, tags=["Orders"])
 def create_order(order: schemas.OrderCreate, db: Session = Depends(get_db)):
     return orders.create(db=db, order=order)
@@ -55,6 +55,7 @@ def delete_one_order(order_id: int, db: Session = Depends(get_db)):
     if order is None:
         raise HTTPException(status_code=404, detail="User not found")
     return orders.delete(db=db, order_id=order_id)
+
 
 ##endpoints for sandwiches
 @app.post("/sandwiches/", response_model=schemas.Sandwich, tags=["Sandwiches"])
@@ -90,7 +91,8 @@ def delete_one_sandwich(sandwich_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Sandwich not found")
     return sandwiches.delete(db=db, sandwich_id=sandwich_id)
 
-##endpoints for recipes
+
+# endpoints for recipes
 @app.post("/recipes/", response_model=schemas.Recipe, tags=["Recipes"])
 def create_recipe(recipe: schemas.RecipeCreate, db: Session = Depends(get_db)):
     return recipes.create(db=db, recipe=recipe)
@@ -124,7 +126,8 @@ def delete_one_recipe(recipe_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Recipe not found")
     return recipes.delete(db=db, recipe_id=recipe_id)
 
-##endpoints for resources
+
+# endpoints for resources
 @app.post("/resources/", response_model=schemas.Resource, tags=["Resources"])
 def create_resource(resource: schemas.ResourceCreate, db: Session = Depends(get_db)):
     return resources.create(db=db, resource=resource)
@@ -158,7 +161,8 @@ def delete_one_resource(resource_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Resource not found")
     return resources.delete(db=db, resource_id=resource_id)
 
-##endpoints for order details
+
+# endpoints for order details
 @app.post("/order_details/", response_model=schemas.OrderDetail, tags=["Order_details"])
 def create_order_detail(OrderDetail: schemas.OrderDetailCreate, db: Session = Depends(get_db)):
     return order_details.create(db=db, OrderDetail=OrderDetail)
@@ -193,7 +197,7 @@ def delete_one_order_detail(OrderDetail_id: int, db: Session = Depends(get_db)):
     return order_details.delete(db=db, OrderDetail_id=OrderDetail_id)
 
 
-##endpoints for payments
+# endpoints for payments
 @app.post("/payments/", response_model=schemas.Payment, tags=["Payments"])
 def create_payment(payment: schemas.PaymentCreate, db: Session = Depends(get_db)):
     return payments.create(db=db, payment=payment)
@@ -228,7 +232,7 @@ def delete_one_payment(payment_id: int, db: Session = Depends(get_db)):
     return payments.delete(db=db, payment_id=payment_id)
 
 
-##endpoints for reviews
+# endpoints for reviews
 @app.post("/reviews/", response_model=schemas.Review, tags=["Reviews"])
 def create_review(review: schemas.ReviewCreate, db: Session = Depends(get_db)):
     return reviews.create(db=db, review=review)
@@ -263,7 +267,7 @@ def delete_one_review(review_id: int, db: Session = Depends(get_db)):
     return reviews.delete(db=db, review_id=review_id)
 
 
-##endpoints for promos
+# endpoints for promos
 @app.post("/promos/", response_model=schemas.Promo, tags=["Promos"])
 def create_promo(promo: schemas.PromoCreate, db: Session = Depends(get_db)):
     return promos.create(db=db, promo=promo)
