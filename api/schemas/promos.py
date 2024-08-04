@@ -6,20 +6,27 @@ from .sandwiches import Sandwich
 
 
 class PromoBase(BaseModel):
-    discount: int
+    id: int
 
 
 class PromoCreate(PromoBase):
-    
+    amount: int
+    expiration: datetime
+    code: str
+
+
+class PromoUpdate(PromoBase):
+    id: int
+    amount: int
+    expiration: datetime
+    code: str
+
 
 class Promo(BaseModel):
-    amount: Optional[int] = None
-    discount : int
-    discountedamount: amount - (amount*discount)
-    
-class Promo(PromoBase):
-    discount : Discount
-    amount : Amount
+    id: int
+    amount: int
+    expiration: datetime
+    code: str
 
     class ConfigDict:
         from_attributes = True
