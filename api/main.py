@@ -23,8 +23,14 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+modelloader.index()
+indexRoute.loadroutes(app)
 
-## enpoints for orders
+
+if name == "__main":
+    uvicorn.run(app, host=conf.app_host, port=conf.app_port)
+    
+## endpoints for orders
 @app.post("/orders/", response_model=schemas.Order, tags=["Orders"])
 def create_order(order: schemas.OrderCreate, db: Session = Depends(get_db)):
     return orders.create(db=db, order=order)
