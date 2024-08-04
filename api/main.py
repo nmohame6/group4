@@ -3,14 +3,11 @@ from sqlalchemy.orm import Session
 from fastapi.middleware.cors import CORSMiddleware
 
 from .models import models, schemas
-from .controllers import orders
-from .controllers import sandwiches
-from .controllers import recipes
-from .controllers import resources
-from .controllers import order_details
+from .schemas import order_details, orders, payments, promos, recipes, resources, reviews, sandwiches
+from .controllers import orders, order_details, payments, promos, recipes, resources, reviews, sandwiches
 from .dependencies.database import engine, get_db
 
-models.Base.metadata.create_all(bind=engine)
+model_loader.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
@@ -23,13 +20,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-modelloader.index()
-indexRoute.loadroutes(app)
 
 
-if name == "__main":
-    uvicorn.run(app, host=conf.app_host, port=conf.app_port)
-    
 ## endpoints for orders
 @app.post("/orders/", response_model=schemas.Order, tags=["Orders"])
 def create_order(order: schemas.OrderCreate, db: Session = Depends(get_db)):
@@ -200,39 +192,40 @@ def delete_one_order_detail(OrderDetail_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Order detail not found")
     return order_details.delete(db=db, OrderDetail_id=OrderDetail_id)
 
+
 ##endpoints for payments
-@app.post("/payments/", response_model=schemas.Payments, tags=["Payments"])
-def create_payment(payments: schemas.PaymentsCreate, db: Session = Depends(get_db)):
-    return Payments.create(db=db, payments=payments)
+@app.post("/payments/", response_model=schemas.Payment, tags=["Payments"])
+def create_payment(payment: schemas.PaymentCreate, db: Session = Depends(get_db)):
+    return payments.create(db=db, payment=payment)
 
 
-@app.get("/payments/", response_model=list[schemas.Payments], tags=["Payments"])
+@app.get("/payments/", response_model=list[schemas.Payment], tags=["Payments"])
 def read_payments(db: Session = Depends(get_db)):
     return payments.read_all(db)
 
 
-@app.get("/payments/{payments_id}", response_model=schemas.Payments, tags=["Payments"])
-def read_one_Payments(payments_id: int, db: Session = Depends(get_db)):
-    payments = payments.read_one(db, payments_id=payments_id)
-    if payments is None:
+@app.get("/payments/{payment_id}", response_model=schemas.Payment, tags=["Payments"])
+def read_one_Payment(payment_id: int, db: Session = Depends(get_db)):
+    payment = payments.read_one(db, payment_id=payment_id)
+    if payment is None:
         raise HTTPException(status_code=404, detail="Payments not found")
     return payments
 
 
-@app.put("/payments/{payments_id}", response_model=schemas.Sandwich, tags=["Payments"])
-def update_one_sandwich(payments_id: int, payments: schemas.PaymentsUpdate, db: Session = Depends(get_db)):
-    payments_db = payments.read_one(db, payments_id=payments_id)
-    if payments_db is None:
+@app.put("/payments/{payments_id}", response_model=schemas.Payment, tags=["Payments"])
+def update_one_sandwich(payment_id: int, payment: schemas.PaymentUpdate, db: Session = Depends(get_db)):
+    payment_db = payments.read_one(db, payment_id=payment_id)
+    if payment_db is None:
         raise HTTPException(status_code=404, detail="Payment not found")
-    return payments.update(db=db, payments=payments, payments_id=payments_id)
+    return payments.update(db=db, payment=payment, payment_id=payment_id)
 
 
-@app.delete("/payments/{payments_id}", tags=["Payments"])
-def delete_one_payments(payments_id: int, db: Session = Depends(get_db)):
-    payments = payments.read_one(db, payments_id=payments_id)
+@app.delete("/payments/{payment_id}", tags=["Payments"])
+def delete_one_payment(payment_id: int, db: Session = Depends(get_db)):
+    payment = payments.read_one(db, payment_id=payment_id)
     if payment is None:
         raise HTTPException(status_code=404, detail="Payment details not found")
-    return payments.delete(db=db, payments_id=payments_id)
+    return payments.delete(db=db, payment_id=payment_id)
 
 
 ##endpoints for reviews
