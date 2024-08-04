@@ -10,5 +10,7 @@ class Payment(Base):
     order_id = Column(Integer, ForeignKey("orders.id"))
     price = Column(DECIMAL(4, 2), nullable=False, server_default='0.0')
     cash = Column(Boolean, index=True, nullable=False)
+    code = Column(String, nullable=False)
 
-    order = relationship("Payment", back_populates="payments")
+    order = relationship("Order", back_populates="payments")
+    promo = relationship("Promo", back_populates="payments")
