@@ -12,5 +12,5 @@ class Review(Base):
     review = Column(String(300))
     rating = Column(Integer, index=True, nullable=False, server_default='0')
 
-    orders = relationship("Order", back_populate="reviews")
+    orders = relationship("Order", back_populates="reviews")
     
