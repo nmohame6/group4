@@ -3,7 +3,6 @@ from sqlalchemy.orm import Session
 from fastapi.middleware.cors import CORSMiddleware
 
 from .models import models, schemas
-from .schemas import order_details, orders, payments, promos, recipes, resources, reviews, sandwiches
 from .controllers import orders, order_details, payments, promos, recipes, resources, reviews, sandwiches
 from .dependencies.database import engine, get_db
 
