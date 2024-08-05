@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Menu</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            text-align: center;
+        }
+        button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 600px;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Online Ordering</h1>
+
+    <button id="orderButton">Order Menu</button>
+    <button id="trackButton">Track Order</button>
+    <button id="detailsButton">Menu Item Details</button>
+    <button id="reviewsButton"> Reviews</button>
+
+    <div id="orderModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeOrderModal">&times;</span>
+            <h2>Select Menu Items to Order</h2>
+            <form id="orderForm">
+                <label>
+                    <input type="checkbox" name="menuItem" value="BLT"> BLT
+                </label><br>
+                <label>
+                    <input type="checkbox" name="menuItem" value="Grilled Cheese (VG)"> Grilled Cheese (VG)
+                </label><br>
+                <label>
+                    <input type="checkbox" name="menuItem" value="Bean Burger (VG)"> Bean Burger (VG)
+                </label><br>
+                <label>
+                    <input type="checkbox" name="menuItem" value="Cool Wrap"> Cool Wrap
+                </label><br>
+                <label>
+                    <input type="checkbox" name="menuItem" value="Italian Veggie (VG)"> Italian Veggie (VG)
+                </label><br>
+                <label>
+                    <input type="checkbox" name="menuItem" value="Hamburger"> Hamburger
+                </label><br>
+                <button type="button" onclick="submit()">Submit</button>
+            </form>
+        </div>
+    </div>
+
+     <div id="reviewsModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeReviewsModal">&times;</span>
+            <h2>Submit a Review</h2>
+            <form id="reviewsForm">
+                <label for="reviewText">Enter your review:</label><br>
+                <textarea id="reviewText" name="reviewText" rows="4" cols="50"></textarea><br>
+                <button type="button" onclick="submitReview()">Submit Review</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Track Order Modal -->
+    <div id="trackModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeTrackModal">&times;</span>
+            <h2>Track Your Order</h2>
+            <p>Your order is on the way! </p>
+            <p>Estimated time to completion: 20 minutes.</p>
+        </div>
+    </div>
+
+    <!-- Menu Item Details Modal -->
+    <div id="detailsModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeDetailsModal">&times;</span>
+            <h2>Menu Item Details</h2>
+            <p>Item Descriptions:</p>
+            <ul>
+                <li><strong>BLT:</strong> A bacon lettuce and tomato sandwich on wheat bread.</li>
+                <li><strong>Cool Wrap:</strong> Turket wrap on a flour tortilla and market veggies.</li>
+                <li><strong>Hamburger:</strong> All beef burger with lettuce tomato and cheese.</li>
+                <strong> Vegetarian Options </strong>
+                <li><strong>Bean Burger:</strong> All bean burger with lettuce tomato and cheese.</li>
+                <li><strong>Grilled Cheese</strong> Delicious classic grilled cheese</li>
+                <li><strong>Italian Veggie Sub:</strong> A 6 inch sub on gluten free bread with market veggies.</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Get modals
+        var orderModal = document.getElementById("orderModal");
+        var trackModal = document.getElementById("trackModal");
+        var detailsModal = document.getElementById("detailsModal");
+        var reviewsModal = document.getElementById("reviewsModal");
+
+        // Get buttons
+        var orderButton = document.getElementById("orderButton");
+        var trackButton = document.getElementById("trackButton");
+        var detailsButton = document.getElementById("detailsButton");
+        var reviewsButton = document.getElementById("reviewsButton");
+
+        // Get close buttons
+        var closeOrderModal = document.getElementById("closeOrderModal");
+        var closeTrackModal = document.getElementById("closeTrackModal");
+        var closeDetailsModal = document.getElementById("closeDetailsModal");
+        var closeReviewsModal = document.getElementById("closeReviewsModal");
+
+        // Open order modal
+        orderButton.onclick = function() {
+            orderModal.style.display = "block";
+        }
+
+        // Open track modal
+        trackButton.onclick = function() {
+            trackModal.style.display = "block";
+        }
+
+        // Open details modal
+        detailsButton.onclick = function() {
+            detailsModal.style.display = "block";
+        }
+
+        reviewsButton.onclick = function() {
+            reviewsModal.style.display = "block";
+        }
+
+        // Close modals
+        closeOrderModal.onclick = function() {
+            orderModal.style.display = "none";
+        }
+        closeTrackModal.onclick = function() {
+            trackModal.style.display = "none";
+        }
+        closeDetailsModal.onclick = function() {
+            detailsModal.style.display = "none";
+        }
+        closeReviewsModal.onclick = function() {
+            reviewsModal.style.display = "none";
+        }
+
+        // Close modals when clicking outside
+        window.onclick = function(event) {
+            if (event.target == orderModal) {
+                orderModal.style.display = "none";
+            } else if (event.target == trackModal) {
+                trackModal.style.display = "none";
+            } else if (event.target == detailsModal) {
+                detailsModal.style.display = "none";
+            }
+        }
+
+        // Submit order function
+        function submit() {
+            var form = document.getElementById("orderForm");
+            var selectedItems = Array.from(form.elements.menuItem)
+                .filter(item => item.checked)
+                .map(item => item.value);
+            if (selectedItems.length > 0) {
+                alert("This is your current order: " + selectedItems.join(", "));
+                orderModal.style.display = "none";
+                form.reset();
+            } else {
+                alert("You havent selected anything.");
+            }
+        }
+        function submitReview() {
+            var reviewText = document.getElementById("reviewText").value;
+            if (reviewText.trim() !== "") {
+                alert("Thank you for your review: " + reviewText);
+                reviewsModal.style.display = "none";
+                document.getElementById("reviewsForm").reset();
+            } else {
+                alert("Please enter a review.");
+            }
+        }
+    </script>
+</body>
+</html>

@@ -6,8 +6,8 @@ from ..models import models, schemas
 def create(db: Session, resource: schemas.Resource):
     # Create a new instance of the Resource model with the provided data
     db_resource = models.Resource(
-        name= resource.name,
-        description= resource.description
+        item= resource.item,
+        amount= resource.amount
     )
     # Add the resource)
     # Commit the changes to the database

@@ -6,8 +6,8 @@ from ..models import models, schemas
 def create(db: Session, sandwich: schemas.Sandwich):
     # Create a new instance of the Sandwich model with the provided data
     db_sandwich = models.Sandwich(
-        name= sandwich.name,
-        description= sandwich.description
+        sandwich_name= sandwich.sandwich_name,
+        price= sandwich.price
     )
     # Add the newly created Sandwich object to the database session
     db.add(db_sandwich)

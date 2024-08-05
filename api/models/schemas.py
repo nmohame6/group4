@@ -1,0 +1,159 @@
+from datetime import datetime
+from typing import Optional
+from pydantic import BaseModel
+from .order_details import OrderDetail
+from .orders import Order
+from .resources import Resource
+from .sandwiches import Sandwich
+from .reviews import Review
+
+
+
+class OrderBase(BaseModel):
+    customer_name: str
+    description: Optional[str] = None
+
+
+class OrderCreate(OrderBase):
+    pass
+
+
+class OrderUpdate(BaseModel):
+    customer_name: Optional[str] = None
+    description: Optional[str] = None
+
+
+class Order(OrderBase):
+    id: int
+    address: str
+    order_date: Optional[datetime] = None
+    order_details: list[OrderDetail] = None
+
+    class ConfigDict:
+        from_attributes = True
+
+
+class PaymentBase(BaseModel):
+  id: int
+  price: int
+
+class PaymentCreate(PaymentBase):
+  order_id: int
+
+class PaymentUpdate(BaseModel):
+  id: Optional[int] = None
+  price: Optional[int] = None
+  order_id: Optional[int] = None
+
+class Payment(PaymentBase):
+  cash: bool
+
+  class ConfigDict:
+    from_attributes = True
+
+
+class PromoBase(BaseModel):
+    id: int
+
+
+class PromoCreate(PromoBase):
+    amount: int
+    expiration: datetime
+    code: str
+
+
+class PromoUpdate(PromoBase):
+    id: int
+    amount: int
+    expiration: datetime
+    code: str
+
+
+class Promo(BaseModel):
+    id: int
+    amount: int
+    expiration: datetime
+    code: str
+
+    class ConfigDict:
+        from_attributes = True
+
+
+class RecipeBase(BaseModel):
+    amount: int
+
+
+class RecipeCreate(RecipeBase):
+    sandwich_id: int
+    resource_id: int
+
+class RecipeUpdate(BaseModel):
+    sandwich_id: Optional[int] = None
+    resource_id: Optional[int] = None
+    amount: Optional[int] = None
+
+class Recipe(RecipeBase):
+    id: int
+    sandwich: Sandwich
+    resource: Resource
+
+    class ConfigDict:
+        from_attributes = True
+
+class ResourceBase(BaseModel):
+    item: str
+    amount: int
+
+
+class ResourceCreate(ResourceBase):
+    pass
+
+
+class ResourceUpdate(BaseModel):
+    item: Optional[str] = None
+    amount: Optional[int] = None
+
+
+class Resource(ResourceBase):
+    id: int
+
+    class ConfigDict:
+        from_attributes = True
+
+class ReviewBase(BaseModel):
+    review: str
+    rating: int
+
+class ReviewCreate(ReviewBase):
+    order_id: int
+
+class ReviewUpdate(BaseModel):
+    order_id: Optional[int] = None
+    review: Optional[str] = None
+    rating: Optional[int] = None
+
+class Review(ReviewBase):
+    id: int
+
+    class ConfigDict:
+        from_attributes = True
+
+class SandwichBase(BaseModel):
+    sandwich_name: str
+    price: float
+
+
+class SandwichCreate(SandwichBase):
+    pass
+
+
+class SandwichUpdate(BaseModel):
+    sandwich_name: Optional[str] = None
+    price: Optional[float] = None
+
+
+class Sandwich(SandwichBase):
+    id: int
+
+    class ConfigDict:
+        from_attributes = True
