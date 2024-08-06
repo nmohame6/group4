@@ -3,11 +3,12 @@ from sqlalchemy.orm import Session
 from fastapi.middleware.cors import CORSMiddleware
 
 from .models import models, schemas
-from .controllers import orders
+from .controllers import orders, reviews, promos
 from .controllers import sandwiches
 from .controllers import recipes
 from .controllers import resources
 from .controllers import order_details
+from .controllers import payments
 from .dependencies.database import engine, get_db
 
 models.Base.metadata.create_all(bind=engine)
@@ -23,13 +24,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-modelloader.index()
-indexRoute.loadroutes(app)
 
 
-if name == "__main":
-    uvicorn.run(app, host=conf.app_host, port=conf.app_port)
-    
 ## endpoints for orders
 @app.post("/orders/", response_model=schemas.Order, tags=["Orders"])
 def create_order(order: schemas.OrderCreate, db: Session = Depends(get_db)):
@@ -63,6 +59,7 @@ def delete_one_order(order_id: int, db: Session = Depends(get_db)):
     if order is None:
         raise HTTPException(status_code=404, detail="User not found")
     return orders.delete(db=db, order_id=order_id)
+
 
 ##endpoints for sandwiches
 @app.post("/sandwiches/", response_model=schemas.Sandwich, tags=["Sandwiches"])
@@ -98,10 +95,11 @@ def delete_one_sandwich(sandwich_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Sandwich not found")
     return sandwiches.delete(db=db, sandwich_id=sandwich_id)
 
-##endpoints for recipes
+
+# endpoints for recipes
 @app.post("/recipes/", response_model=schemas.Recipe, tags=["Recipes"])
 def create_recipe(recipe: schemas.RecipeCreate, db: Session = Depends(get_db)):
-    return recipes.create(db=db, recipe=recipe)
+    return recipes.create(db=db, request=recipe)
 
 
 @app.get("/recipes/", response_model=list[schemas.Recipe], tags=["Recipes"])
@@ -132,7 +130,8 @@ def delete_one_recipe(recipe_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Recipe not found")
     return recipes.delete(db=db, recipe_id=recipe_id)
 
-##endpoints for resources
+
+# endpoints for resources
 @app.post("/resources/", response_model=schemas.Resource, tags=["Resources"])
 def create_resource(resource: schemas.ResourceCreate, db: Session = Depends(get_db)):
     return resources.create(db=db, resource=resource)
@@ -166,10 +165,11 @@ def delete_one_resource(resource_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Resource not found")
     return resources.delete(db=db, resource_id=resource_id)
 
-##endpoints for order details
+
+# endpoints for order details
 @app.post("/order_details/", response_model=schemas.OrderDetail, tags=["Order_details"])
 def create_order_detail(OrderDetail: schemas.OrderDetailCreate, db: Session = Depends(get_db)):
-    return order_details.create(db=db, OrderDetail=OrderDetail)
+    return order_details.create(db=db, request=OrderDetail)
 
 
 @app.get("/order_details/", response_model=list[schemas.OrderDetail], tags=["Order_details"])
@@ -179,7 +179,7 @@ def read_order_details(db: Session = Depends(get_db)):
 
 @app.get("/order_details/{OrderDetail_id}", response_model=schemas.OrderDetail, tags=["Order_details"])
 def read_one_order_detail(OrderDetail_id: int, db: Session = Depends(get_db)):
-    OrderDetail = order_details.read_one(db, OrderDetail_id=OrderDetail_id)
+    OrderDetail = order_details.read_one(db, item_id=OrderDetail_id)
     if OrderDetail is None:
         raise HTTPException(status_code=404, detail="Order detail not found")
     return OrderDetail
@@ -187,52 +187,52 @@ def read_one_order_detail(OrderDetail_id: int, db: Session = Depends(get_db)):
 
 @app.put("/order_details/{OrderDetail_id}", response_model=schemas.OrderDetail, tags=["Order_details"])
 def update_one_order_detail(OrderDetail_id: int, OrderDetail: schemas.OrderDetailUpdate, db: Session = Depends(get_db)):
-    OrderDetail_db = order_details.read_one(db, OrderDetail_id=OrderDetail_id)
+    OrderDetail_db = order_details.read_one(db, item_id=OrderDetail_id)
     if OrderDetail_db is None:
         raise HTTPException(status_code=404, detail="Order detail not found")
-    return order_details.update(db=db, OrderDetail=OrderDetail, OrderDetail_id=OrderDetail_id)
+    return order_details.update(db=db, request=OrderDetail, item_id=OrderDetail_id)
 
 
 @app.delete("/order_details/{OrderDetail_id}", tags=["Order_details"])
 def delete_one_order_detail(OrderDetail_id: int, db: Session = Depends(get_db)):
-    OrderDetail = order_details.read_one(db, OrderDetail_id=OrderDetail_id)
+    OrderDetail = order_details.read_one(db, item_id=OrderDetail_id)
     if OrderDetail is None:
         raise HTTPException(status_code=404, detail="Order detail not found")
-    return order_details.delete(db=db, OrderDetail_id=OrderDetail_id)
+    return order_details.delete(db=db, item_id=OrderDetail_id)
 
 ##endpoints for payments
-@app.post("/payments/", response_model=schemas.Payments, tags=["Payments"])
-def create_payment(payments: schemas.PaymentsCreate, db: Session = Depends(get_db)):
-    return Payments.create(db=db, payments=payments)
+@app.post("/payments/", response_model=schemas.Payment, tags=["Payments"])
+def create_payment(payment: schemas.PaymentCreate, db: Session = Depends(get_db)):
+    return payments.create(db=db, request=payment)
 
 
-@app.get("/payments/", response_model=list[schemas.Payments], tags=["Payments"])
+@app.get("/payments/", response_model=list[schemas.Payment], tags=["Payments"])
 def read_payments(db: Session = Depends(get_db)):
     return payments.read_all(db)
 
 
-@app.get("/payments/{payments_id}", response_model=schemas.Payments, tags=["Payments"])
-def read_one_Payments(payments_id: int, db: Session = Depends(get_db)):
-    payments = payments.read_one(db, payments_id=payments_id)
-    if payments is None:
-        raise HTTPException(status_code=404, detail="Payments not found")
-    return payments
+@app.get("/payments/{Payments_id}", response_model=schemas.Payment, tags=["Payments"])
+def read_one_payment(Payment_id: int, db: Session = Depends(get_db)):
+    Payment = payments.read_one(db, item_id=Payment_id)
+    if Payment is None:
+        raise HTTPException(status_code=404, detail="Order detail not found")
+    return Payment
 
 
-@app.put("/payments/{payments_id}", response_model=schemas.Sandwich, tags=["Payments"])
-def update_one_sandwich(payments_id: int, payments: schemas.PaymentsUpdate, db: Session = Depends(get_db)):
-    payments_db = payments.read_one(db, payments_id=payments_id)
-    if payments_db is None:
+@app.put("/payments/{Payments_id}", response_model=schemas.Payment, tags=["Payments"])
+def update_one_payment(Payment_id: int, Payment: schemas.PaymentUpdate, db: Session = Depends(get_db)):
+    Payment_db = payments.read_one(db, item_id=Payment_id)
+    if Payment_db is None:
         raise HTTPException(status_code=404, detail="Payment not found")
-    return payments.update(db=db, payments=payments, payments_id=payments_id)
+    return payments.update(db=db, request=Payment, item_id=Payment_id)
 
 
-@app.delete("/payments/{payments_id}", tags=["Payments"])
-def delete_one_payments(payments_id: int, db: Session = Depends(get_db)):
-    payments = payments.read_one(db, payments_id=payments_id)
+@app.delete("/payments/{payment_id}", tags=["Payments"])
+def delete_one_payment(payment_id: int, db: Session = Depends(get_db)):
+    payment = payments.read_one(db, item_id=payment_id)
     if payment is None:
-        raise HTTPException(status_code=404, detail="Payment details not found")
-    return payments.delete(db=db, payments_id=payments_id)
+        raise HTTPException(status_code=404, detail="payment not found")
+    return payments.delete(db=db, item_id=payment_id)
 
 
 ##endpoints for reviews
@@ -246,34 +246,34 @@ def read_reviews(db: Session = Depends(get_db)):
     return reviews.read_all(db)
 
 
-@app.get("/reviews/{review_id}", response_model=schemas.Review, tags=["Reviews"])
+@app.get("/reviews/{Review_id}", response_model=schemas.Review, tags=["Reviews"])
 def read_one_review(review_id: int, db: Session = Depends(get_db)):
-    review = reviews.read_one(db, review_id=review_id)
+    review = reviews.read_one(db, item_id=review_id)
     if review is None:
-        raise HTTPException(status_code=404, detail="Review not found")
+        raise HTTPException(status_code=404, detail="Order detail not found")
     return review
 
 
-@app.put("/reviews/{review_id}", response_model=schemas.Review, tags=["Reviews"])
-def update_one_review(review_id: int, review: schemas.ReviewUpdate, db: Session = Depends(get_db)):
-    review_db = reviews.read_one(db, review_id=review_id)
-    if review_db is None:
-        raise HTTPException(status_code=404, detail="Review not found")
-    return reviews.update(db=db, review=review, review_id=review_id)
+@app.put("/reviews/{Review_id}", response_model=schemas.Review, tags=["Reviews"])
+def update_one_review(Review_id: int, Review: schemas.ReviewUpdate, db: Session = Depends(get_db)):
+    Review_db = reviews.read_one(db, item_id=Review_id)
+    if Review_db is None:
+        raise HTTPException(status_code=404, detail="Order detail not found")
+    return reviews.update(db=db, request=Review, item_id=Review_id)
 
 
-@app.delete("/reviews/{review_id}", tags=["Reviews"])
-def delete_one_review(review_id: int, db: Session = Depends(get_db)):
-    review = reviews.read_one(db, review_id=review_id)
-    if review is None:
+@app.delete("/reviews/{Review_id}", tags=["Reviews"])
+def delete_one_review(Review_id: int, db: Session = Depends(get_db)):
+    Review = reviews.read_one(db, item_id=Review_id)
+    if Review is None:
         raise HTTPException(status_code=404, detail="Review not found")
-    return reviews.delete(db=db, review_id=review_id)
+    return reviews.delete(db=db, item_id=Review_id)
 
 
 ##endpoints for promos
 @app.post("/promos/", response_model=schemas.Promo, tags=["Promos"])
 def create_promo(promo: schemas.PromoCreate, db: Session = Depends(get_db)):
-    return promos.create(db=db, promo=promo)
+    return promos.create(db=db, promos=promo)
 
 
 @app.get("/promos/", response_model=list[schemas.Promo], tags=["Promos"])
@@ -283,7 +283,7 @@ def read_promos(db: Session = Depends(get_db)):
 
 @app.get("/promos/{promo_id}", response_model=schemas.Promo, tags=["Promos"])
 def read_one_promo(promo_id: int, db: Session = Depends(get_db)):
-    promo = promos.read_one(db, promo_id=promo_id)
+    promo = promos.read_one(db, Promo_id=promo_id)
     if promo is None:
         raise HTTPException(status_code=404, detail="Promo not found")
     return promo
@@ -291,15 +291,16 @@ def read_one_promo(promo_id: int, db: Session = Depends(get_db)):
 
 @app.put("/promos/{promo_id}", response_model=schemas.Promo, tags=["Promos"])
 def update_one_promo(promo_id: int, promo: schemas.PromoUpdate, db: Session = Depends(get_db)):
-    promo_db = promos.read_one(db, promo_id=promo_id)
-    if promo_db is None:
-        raise HTTPException(status_code=404, detail="Promo not found")
-    return promos.update(db=db, promo=promo, promo_id=promo_id)
+     promo_db = promos.read_one(db, Promo_id=promo_id)
+     if promo_db is None:
+         raise HTTPException(status_code=404, detail="Promo not found")
+     return promos.update(db=db, promo=promo, Promo_id=promo_id)
 
 
 @app.delete("/promos/{promo_id}", tags=["Promos"])
 def delete_one_promo(promo_id: int, db: Session = Depends(get_db)):
-    promo = promos.read_one(db, promo_id=promo_id)
+    promo = promos.read_one(db, Promo_id=promo_id)
     if promo is None:
         raise HTTPException(status_code=404, detail="Promo not found")
     return promos.delete(db=db, promo_id=promo_id)
+
