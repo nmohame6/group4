@@ -1,9 +1,9 @@
 from sqlalchemy.orm import Session
-from fastapi import HTTPException, status, Response, Depends
-from ..models import models, schemas
+from fastapi import status, Response
+from ..models import models
 
 
-def create(db: Session, resource: schemas.Resource):
+def create(db: Session, resource):
     # Create a new instance of the Resource model with the provided data
     db_resource = models.Resource(
         item= resource.item,
