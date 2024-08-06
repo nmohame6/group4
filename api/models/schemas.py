@@ -50,21 +50,21 @@ class OrderDetail(OrderDetailBase):
 
 class OrderBase(BaseModel):
     customer_name: str
-    description: Optional[str] = None
 
 
 class OrderCreate(OrderBase):
     address: str
+    description: Optional[str] = None
 
 
 class OrderUpdate(BaseModel):
     customer_name: Optional[str] = None
     description: Optional[str] = None
+    address: Optional[str] = None
 
 
 class Order(OrderBase):
     id: int
-    address: str
     order_date: Optional[datetime] = None
     order_details: list[OrderDetail] = None
 
@@ -73,39 +73,42 @@ class Order(OrderBase):
 
 
 class PaymentBase(BaseModel):
-  id: int
-  price: int
+    price: int
+
 
 class PaymentCreate(PaymentBase):
-  order_id: int
+    order_id: int
+    cash: bool
+    promo_id: str
+
 
 class PaymentUpdate(BaseModel):
-  id: Optional[int] = None
-  price: Optional[int] = None
-  order_id: Optional[int] = None
+    price: Optional[int] = None
+    order_id: Optional[int] = None
+    cash: Optional[bool] = None
+    promo_id: Optional[str] = None
+
 
 class Payment(PaymentBase):
-  cash: bool
+    id: int
 
-  class ConfigDict:
-    from_attributes = True
+    class ConfigDict:
+        from_attributes = True
 
 
 class PromoBase(BaseModel):
-    id: int
+    promo_id: str
 
 
 class PromoCreate(PromoBase):
-    amount: int
+    discount: int
     expiration: datetime
-    code: str
 
 
 class PromoUpdate(PromoBase):
-    id: int
-    amount: int
-    expiration: datetime
-    code: str
+    discount: Optional[int] = None
+    expiration: Optional[datetime] = None
+    promo_id: Optional[str] = None
 
 
 class Promo(BaseModel):
