@@ -1,14 +1,14 @@
 from sqlalchemy.orm import Session
-from fastapi import HTTPException, status, Response, Depends
-from ..models import models, schemas
+from fastapi import HTTPException, status, Response
+from ..models import models
 from sqlalchemy.exc import SQLAlchemyError
 
 
-def create(db: Session, request):
+def create(db: Session, review):
     new_item = models.Review(
-        order_id=request.order_id,
-        review = request.review,
-        rating = request.rating,
+        order_id=review.order_id,
+        comment=review.comment,
+        rating=review.rating,
     )
 
     try:
