@@ -6,8 +6,8 @@ from ..models import models
 def create(db: Session, promos):
     db_promos = models.Promo(
         promo_id=promos.promo_id,
-        discount = promos.discount,
-        expiration = promos.expiration
+        discount=promos.discount,
+        expiration=promos.expiration
 
     )
     db.add(db_promos)
