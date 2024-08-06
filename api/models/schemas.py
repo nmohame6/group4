@@ -113,9 +113,6 @@ class PromoUpdate(PromoBase):
 
 class Promo(BaseModel):
     id: int
-    amount: int
-    expiration: datetime
-    code: str
 
     class ConfigDict:
         from_attributes = True
@@ -178,6 +175,30 @@ class ReviewUpdate(BaseModel):
 
 
 class Review(ReviewBase):
+    id: int
+
+    class ConfigDict:
+        from_attributes = True
+
+
+class CustomerBase(BaseModel):
+    customer_name: str
+
+
+class CustomerCreate(OrderBase):
+    email: str
+    phone: int
+    address: str
+
+
+class CustomerUpdate(BaseModel):
+    customer_name: Optional[str] = None
+    email: Optional[str] = None
+    address: Optional[str] = None
+    phone: Optional[int] = None
+
+
+class Customer(OrderBase):
     id: int
 
     class ConfigDict:
