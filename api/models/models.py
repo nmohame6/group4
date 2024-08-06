@@ -38,7 +38,7 @@ class Payment(Base):
     order_id = Column(Integer, ForeignKey("orders.id"))
     price = Column(DECIMAL(4, 2), nullable=False, server_default='0.0')
     cash = Column(Boolean, index=True, nullable=False)
-    code = Column(String, nullable=False)
+    code = Column(String(10), nullable=False)
 
     order = relationship("Order", back_populates="payments")
     promo = relationship("Promo", back_populates="payments")
@@ -49,11 +49,10 @@ class Promo(Base):
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     expiration = Column(DATETIME, nullable=False, server_default=str(datetime.now()))
-    code = Column(String, nullable=False)
-    amount = Column(Integer, nullable=False)
+    promo_id = Column(String(10), nullable=False)
+    discount = Column(Integer, nullable=False)
 
     payment = relationship("Payment", back_populates="promo")
-
 
 
 class Resource(Base):
@@ -71,7 +70,7 @@ class Review(Base):
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     order_id = Column(Integer, ForeignKey("orders.id"))
-    review = Column(String(300))
+    comment = Column(String(300))
     rating = Column(Integer, index=True, nullable=False, server_default='0')
 
     orders = relationship("Order", back_populates="reviews")
