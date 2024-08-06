@@ -1,14 +1,14 @@
 from sqlalchemy.orm import Session
-from fastapi import HTTPException, status, Response, Depends
-from ..models import models, schemas
+from fastapi import HTTPException, status, Response
+from ..models import models
 from sqlalchemy.exc import SQLAlchemyError
 
 
-def create(db: Session, request):
+def create(db: Session, order):
     new_item = models.Order(
-        customer_name=request.customer_name,
-        address=request.address,
-        description=request.description
+        customer_name=order.customer_name,
+        address=order.address,
+        description=order.description
     )
 
     try:
@@ -31,9 +31,9 @@ def read_all(db: Session):
     return result
 
 
-def read_one(db: Session, item_id):
+def read_one(db: Session, order_id):
     try:
-        item = db.query(models.Order).filter(models.Order.id == item_id).first()
+        item = db.query(models.Order).filter(models.Order.id == order_id).first()
         if not item:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Id not found!")
     except SQLAlchemyError as e:
@@ -42,12 +42,12 @@ def read_one(db: Session, item_id):
     return item
 
 
-def update(db: Session, item_id, request):
+def update(db: Session, order_id, order):
     try:
-        item = db.query(models.Order).filter(models.Order.id == item_id)
+        item = db.query(models.Order).filter(models.Order.id == order_id)
         if not item.first():
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Id not found!")
-        update_data = request.dict(exclude_unset=True)
+        update_data = order.dict(exclude_unset=True)
         item.update(update_data, synchronize_session=False)
         db.commit()
     except SQLAlchemyError as e:
@@ -56,9 +56,9 @@ def update(db: Session, item_id, request):
     return item.first()
 
 
-def delete(db: Session, item_id):
+def delete(db: Session, order_id):
     try:
-        item = db.query(models.Order).filter(models.Order.id == item_id)
+        item = db.query(models.Order).filter(models.Order.id == order_id)
         if not item.first():
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Id not found!")
         item.delete(synchronize_session=False)
