@@ -6,14 +6,26 @@
     <title>Order Menu</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Montserrat', sans-serif;
             margin: 20px;
             text-align: center;
+            background-color: #f9f9f9;
+            color: #333;
         }
         button {
             margin: 10px;
             padding: 10px 20px;
             font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007BFF;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
         }
         .modal {
             display: none;
@@ -33,6 +45,7 @@
             border: 1px solid #888;
             width: 80%;
             max-width: 600px;
+            border-radius: 10px;
         }
         .close {
             color: #aaa;
@@ -50,12 +63,14 @@
 </head>
 <body>
 
-    <h1>Online Ordering</h1>
+    <h1>Welcome to Gio's Sandwich Shop</h1>
+    <br><img src="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExenQ3MTdwMmVjaHN6NXB1Ym5jcTdvOW5lajZhMTVwcTl1bmRveXdtNCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l3nWaqfPyxbtGWihG/giphy.gif" alt="Sandwich GIF" width="300"><br>
+    <h2>Online Ordering</h2>
 
-    <button id="orderButton">Order Menu</button>
+    <button id="detailsButton">Menu</button>
+    <button id="orderButton">Place an Order</button>
     <button id="trackButton">Track Order</button>
-    <button id="detailsButton">Menu Item Details</button>
-    <button id="reviewsButton"> Reviews</button>
+    <button id="reviewsButton">Reviews</button>
 
     <div id="orderModal" class="modal">
         <div class="modal-content">
@@ -80,12 +95,12 @@
                 <label>
                     <input type="checkbox" name="menuItem" value="Hamburger"> Hamburger
                 </label><br>
-                <button type="button" onclick="submit()">Submit</button>
+                <button type="button" onclick="submitOrder()">Submit</button>
             </form>
         </div>
     </div>
 
-     <div id="reviewsModal" class="modal">
+    <div id="reviewsModal" class="modal">
         <div class="modal-content">
             <span class="close" id="closeReviewsModal">&times;</span>
             <h2>Submit a Review</h2>
@@ -102,8 +117,15 @@
         <div class="modal-content">
             <span class="close" id="closeTrackModal">&times;</span>
             <h2>Track Your Order</h2>
-            <p>Your order is on the way! </p>
-            <p>Estimated time to completion: 20 minutes.</p>
+            <form id="trackForm">
+                <label for="orderNumber">Enter your order number:</label><br>
+                <input type="text" id="orderNumber" name="orderNumber"><br>
+                <button type="button" onclick="submitOrderNumber()">Submit</button>
+            </form>
+            <div id="orderStatus" style="display: none;">
+                <p>Your order is on the way!</p>
+                <p>Estimated time to completion: 20 minutes.</p>
+            </div>
         </div>
     </div>
 
@@ -112,15 +134,14 @@
         <div class="modal-content">
             <span class="close" id="closeDetailsModal">&times;</span>
             <h2>Menu Item Details</h2>
-            <p>Item Descriptions:</p>
             <ul>
-                <li><strong>BLT:</strong> A bacon lettuce and tomato sandwich on wheat bread.</li>
-                <li><strong>Cool Wrap:</strong> Turket wrap on a flour tortilla and market veggies.</li>
-                <li><strong>Hamburger:</strong> All beef burger with lettuce tomato and cheese.</li>
-                <strong> Vegetarian Options </strong>
-                <li><strong>Bean Burger:</strong> All bean burger with lettuce tomato and cheese.</li>
-                <li><strong>Grilled Cheese</strong> Delicious classic grilled cheese</li>
-                <li><strong>Italian Veggie Sub:</strong> A 6 inch sub on gluten free bread with market veggies.</li>
+                <br><strong>BLT:</strong> A bacon lettuce and tomato sandwich on wheat bread. (700 cals)<br>
+                <br><strong>Cool Wrap:</strong> Turkey wrap on a flour tortilla and market veggies. (650 cals)<br>
+                <br><strong>Hamburger:</strong> All beef burger with lettuce, tomato, and cheese. (200 cals)<br>
+                <br><strong> Vegetarian Options </strong><br>
+                <br><strong>Bean Burger:</strong> All bean burger with lettuce, tomato, and cheese (150 cals)<br>
+                <br><strong>Grilled Cheese:</strong> Delicious classic grilled cheese. (200 cals)<br>
+                <br><strong>Italian Veggie Sub:</strong> A 6 inch sub on gluten-free bread with market veggies. (350 cals)<br>
             </ul>
         </div>
     </div>
@@ -185,31 +206,44 @@
                 trackModal.style.display = "none";
             } else if (event.target == detailsModal) {
                 detailsModal.style.display = "none";
+            } else if (event.target == reviewsModal) {
+                reviewsModal.style.display = "none";
             }
         }
 
         // Submit order function
-        function submit() {
+        function submitOrder() {
             var form = document.getElementById("orderForm");
             var selectedItems = Array.from(form.elements.menuItem)
                 .filter(item => item.checked)
                 .map(item => item.value);
             if (selectedItems.length > 0) {
-                alert("This is your current order: " + selectedItems.join(", "));
+                alert("You have ordered: " + selectedItems.join(", ") + ". Click 'Track Order' to see how much time is left until your food is ready. Don't worry we're quick!");
                 orderModal.style.display = "none";
                 form.reset();
             } else {
-                alert("You havent selected anything.");
+                alert("You haven't selected anything.");
             }
         }
+
         function submitReview() {
             var reviewText = document.getElementById("reviewText").value;
             if (reviewText.trim() !== "") {
-                alert("Thank you for your review: " + reviewText);
+                alert("Thank you for your feedback!");
                 reviewsModal.style.display = "none";
                 document.getElementById("reviewsForm").reset();
             } else {
                 alert("Please enter a review.");
+            }
+        }
+
+        function submitOrderNumber() {
+            var orderNumber = document.getElementById("orderNumber").value;
+            if (orderNumber.trim() !== "") {
+                document.getElementById("orderStatus").style.display = "block";
+                document.getElementById("trackForm").style.display = "none";
+            } else {
+                alert("Please enter an order number.");
             }
         }
     </script>

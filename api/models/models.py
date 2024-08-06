@@ -13,8 +13,6 @@ class Customer(Base):
     phone = Column(Integer, unique=True, nullable=False)
     address = Column(String(300))
 
-    order = relationship("Order", back_populates="customers")
-
 
 class OrderDetail(Base):
     __tablename__ = "order_details"
@@ -39,10 +37,7 @@ class Order(Base):
     address = Column(String(300), ForeignKey("customers.address"))
     order_date = Column(DATETIME, nullable=False, server_default=str(datetime.now()))
     description = Column(String(300))
-
-    order_details = relationship("OrderDetail", back_populates="order")
-    payments = relationship("Payment", back_populates="order")
-    reviews = relationship("Review", back_populates="order")
+    
     customers = relationship("Customer", back_populates="order")
 
 
@@ -53,8 +48,6 @@ class Promo(Base):
     expiration = Column(DATETIME, nullable=False, server_default=str(datetime.now()))
     promo_id = Column(String(10), nullable=True)
     discount = Column(Integer, nullable=False)
-
-    payments = relationship("Payment", back_populates="promos")
 
 
 class Payment(Base):
@@ -77,8 +70,6 @@ class Resource(Base):
     item = Column(String(100), unique=True, nullable=False)
     amount = Column(Integer, index=True, nullable=False, server_default='0.0')
 
-    recipes = relationship("Recipe", back_populates="resource")
-
 
 class Review(Base):
     __tablename__ = "reviews"
@@ -98,9 +89,6 @@ class Sandwich(Base):
     sandwich_name = Column(String(100), unique=True, nullable=True)
     calories = Column(Integer, index=True, nullable=False, server_default='0.0')
     price = Column(DECIMAL(4, 2), nullable=False, server_default='0.0')
-
-    recipes = relationship("Recipe", back_populates="sandwich")
-    order_details = relationship("OrderDetail", back_populates="sandwich")
 
 
 class Recipe(Base):
