@@ -1,12 +1,51 @@
 from datetime import datetime
 from typing import Optional
 from pydantic import BaseModel
-from .order_details import OrderDetail
-from .orders import Order
-from .resources import Resource
-from .sandwiches import Sandwich
-from .reviews import Review
 
+
+class SandwichBase(BaseModel):
+    sandwich_name: str
+    price: float
+
+
+class SandwichCreate(SandwichBase):
+    pass
+
+
+class SandwichUpdate(BaseModel):
+    sandwich_name: Optional[str] = None
+    price: Optional[float] = None
+
+
+class Sandwich(SandwichBase):
+    id: int
+
+    class ConfigDict:
+        from_attributes = True
+
+
+class OrderDetailBase(BaseModel):
+    amount: int
+
+
+class OrderDetailCreate(OrderDetailBase):
+    order_id: int
+    sandwich_id: int
+
+class OrderDetailUpdate(BaseModel):
+    order_id: Optional[int] = None
+    sandwich_id: Optional[int] = None
+    amount: Optional[int] = None
+
+
+class OrderDetail(OrderDetailBase):
+    id: int
+    order_id: int
+    sandwich: Optional[Sandwich] = None
+    delivery: bool
+
+    class ConfigDict:
+        from_attributes = True
 
 
 class OrderBase(BaseModel):
@@ -15,7 +54,7 @@ class OrderBase(BaseModel):
 
 
 class OrderCreate(OrderBase):
-    pass
+    address: str
 
 
 class OrderUpdate(BaseModel):
@@ -79,6 +118,27 @@ class Promo(BaseModel):
         from_attributes = True
 
 
+class ResourceBase(BaseModel):
+    item: str
+    amount: int
+
+
+class ResourceCreate(ResourceBase):
+    pass
+
+
+class ResourceUpdate(BaseModel):
+    item: Optional[str] = None
+    amount: Optional[int] = None
+
+
+class Resource(ResourceBase):
+    id: int
+
+    class ConfigDict:
+        from_attributes = True
+
+
 class RecipeBase(BaseModel):
     amount: int
 
@@ -100,28 +160,9 @@ class Recipe(RecipeBase):
     class ConfigDict:
         from_attributes = True
 
-class ResourceBase(BaseModel):
-    item: str
-    amount: int
-
-
-class ResourceCreate(ResourceBase):
-    pass
-
-
-class ResourceUpdate(BaseModel):
-    item: Optional[str] = None
-    amount: Optional[int] = None
-
-
-class Resource(ResourceBase):
-    id: int
-
-    class ConfigDict:
-        from_attributes = True
 
 class ReviewBase(BaseModel):
-    review: str
+    comment: str
     rating: int
 
 class ReviewCreate(ReviewBase):
@@ -129,30 +170,11 @@ class ReviewCreate(ReviewBase):
 
 class ReviewUpdate(BaseModel):
     order_id: Optional[int] = None
-    review: Optional[str] = None
+    comment: Optional[str] = None
     rating: Optional[int] = None
 
+
 class Review(ReviewBase):
-    id: int
-
-    class ConfigDict:
-        from_attributes = True
-
-class SandwichBase(BaseModel):
-    sandwich_name: str
-    price: float
-
-
-class SandwichCreate(SandwichBase):
-    pass
-
-
-class SandwichUpdate(BaseModel):
-    sandwich_name: Optional[str] = None
-    price: Optional[float] = None
-
-
-class Sandwich(SandwichBase):
     id: int
 
     class ConfigDict:
