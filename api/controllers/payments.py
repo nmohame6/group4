@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
-from fastapi import HTTPException, status, Response, Depends
-from ..models import models, schemas
+from fastapi import HTTPException, status, Response
+from ..models import models
 from sqlalchemy.exc import SQLAlchemyError
 
 
@@ -9,7 +9,7 @@ def create(db: Session, request):
         order_id = request.order_id,
         price= request.price,
         cash= request.cash,
-        code= request.code
+        promo_id= request.promo_id
     )
 
     try:
