@@ -31,19 +31,6 @@ class Order(Base):
     reviews = relationship("Review", back_populates="order")
 
 
-class Payment(Base):
-    __tablename__ = "payments"
-
-    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    order_id = Column(Integer, ForeignKey("orders.id"))
-    price = Column(DECIMAL(4, 2), nullable=False, server_default='0.0')
-    cash = Column(Boolean, index=True, nullable=False)
-    code = Column(String(10), nullable=False)
-
-    order = relationship("Order", back_populates="payments")
-    promo = relationship("Promo", back_populates="payments")
-
-
 class Promo(Base):
     __tablename__ = "promos"
 
@@ -52,7 +39,20 @@ class Promo(Base):
     promo_id = Column(String(10), nullable=False)
     discount = Column(Integer, nullable=False)
 
-    payment = relationship("Payment", back_populates="promo")
+    payments = relationship("Payment", back_populates="promo")
+
+
+class Payment(Base):
+    __tablename__ = "payments"
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    order_id = Column(Integer, ForeignKey("orders.id"))
+    price = Column(DECIMAL(4, 2), nullable=False, server_default='0.0')
+    cash = Column(Boolean, index=True, nullable=False)
+    promo_id = Column(String(10), ForeignKey("promos.promo_id"))
+
+    order = relationship("Order", back_populates="payments")
+    promo = relationship("Promo", back_populates="payments")
 
 
 class Resource(Base):
@@ -73,7 +73,7 @@ class Review(Base):
     comment = Column(String(300))
     rating = Column(Integer, index=True, nullable=False, server_default='0')
 
-    orders = relationship("Order", back_populates="reviews")
+    order = relationship("Order", back_populates="reviews")
 
 
 class Sandwich(Base):
