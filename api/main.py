@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from fastapi.middleware.cors import CORSMiddleware
 
 from .models import models, schemas
-from .controllers import orders, reviews, promos
+from .controllers import orders, reviews, promos, customers
 from .controllers import sandwiches
 from .controllers import recipes
 from .controllers import resources
@@ -304,3 +304,36 @@ def delete_one_promo(promo_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Promo not found")
     return promos.delete(db=db, promo_id=promo_id)
 
+
+@app.post("/customers/", response_model=schemas.Customer, tags=["Customers"])
+def create_customer(customer: schemas.CustomerCreate, db: Session = Depends(get_db)):
+    return customer.create(db=db, customer=customer)
+
+
+@app.get("/customers/", response_model=list[schemas.Customer], tags=["Customers"])
+def read_customers(db: Session = Depends(get_db)):
+    return customers.read_all(db)
+
+
+@app.get("/customers/{customer_id}", response_model=schemas.Customer, tags=["Customers"])
+def read_one_customer(customer_id: int, db: Session = Depends(get_db)):
+    customer = customers.read_one(db, customer_id=customer_id)
+    if customer is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return customer
+
+
+@app.put("/customers/{customer_id}", response_model=schemas.Customer, tags=["Customers"])
+def update_one_customer(customer_id: int, customer: schemas.CustomerUpdate, db: Session = Depends(get_db)):
+    customer_db = customers.read_one(db, customer_id=customer_id)
+    if customer_db is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return customers.update(db=db, customer=customer, customer_id=customer_id)
+
+
+@app.delete("/customers/{customer_id}", tags=["Customers"])
+def delete_one_customer(customer_id: int, db: Session = Depends(get_db)):
+    customer = customers.read_one(db, customer_id=customer_id)
+    if customer is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return customers.delete(db=db, customer_id=customer_id)
