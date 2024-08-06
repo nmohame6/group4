@@ -7,6 +7,7 @@ def create(db: Session, sandwich):
     # Create a new instance of the Sandwich model with the provided data
     db_sandwich = models.Sandwich(
         sandwich_name=sandwich.sandwich_name,
+        calories=sandwich.calories,
         price=sandwich.price
     )
     # Add the newly created Sandwich object to the database session

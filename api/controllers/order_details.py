@@ -7,7 +7,10 @@ def create(db: Session, request):
     new_item = models.OrderDetail(
         order_id=request.order_id,
         sandwich_id=request.sandwich_id,
-        amount=request.amount
+        amount=request.amount,
+        delivery=request.delivery,
+        tracking_number=request.tracking_number,
+        status=request.status
     )
 
     try:

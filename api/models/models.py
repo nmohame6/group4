@@ -24,6 +24,8 @@ class OrderDetail(Base):
     sandwich_id = Column(Integer, ForeignKey("sandwiches.id"))
     amount = Column(Integer, index=True, nullable=False)
     delivery = Column(Boolean, index=True, nullable=False)
+    tracking_number = Column(Integer, index=True, autoincrement=True)
+    status = Column(String(50))
 
     sandwich = relationship("Sandwich", back_populates="order_details")
     order = relationship("Order", back_populates="order_details")
@@ -94,6 +96,7 @@ class Sandwich(Base):
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     sandwich_name = Column(String(100), unique=True, nullable=True)
+    calories = Column(Integer, index=True, nullable=False, server_default='0.0')
     price = Column(DECIMAL(4, 2), nullable=False, server_default='0.0')
 
     recipes = relationship("Recipe", back_populates="sandwich")
