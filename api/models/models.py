@@ -4,6 +4,18 @@ from datetime import datetime
 from ..dependencies.database import Base
 
 
+class Customer(Base):
+    __tablename__ = "customers"
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    customer_name = Column(String(50))
+    email = Column(String(50))
+    phone = Column(Integer, unique=True, nullable=False)
+    address = Column(String(300))
+
+    order = relationship("Order", back_populates="customers")
+
+
 class OrderDetail(Base):
     __tablename__ = "order_details"
 
@@ -21,14 +33,15 @@ class Order(Base):
     __tablename__ = "orders"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    customer_name = Column(String(100))
-    address = Column(String(300))
+    customer_name = Column(String(100), ForeignKey("customers.customer_name"))
+    address = Column(String(300), ForeignKey("customers.address"))
     order_date = Column(DATETIME, nullable=False, server_default=str(datetime.now()))
     description = Column(String(300))
 
     order_details = relationship("OrderDetail", back_populates="order")
     payments = relationship("Payment", back_populates="order")
     reviews = relationship("Review", back_populates="order")
+    customers = relationship("Customer", back_populates="order")
 
 
 class Promo(Base):
@@ -36,10 +49,10 @@ class Promo(Base):
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     expiration = Column(DATETIME, nullable=False, server_default=str(datetime.now()))
-    promo_id = Column(String(10), nullable=False)
+    promo_id = Column(String(10), nullable=True)
     discount = Column(Integer, nullable=False)
 
-    payments = relationship("Payment", back_populates="promo")
+    payments = relationship("Payment", back_populates="promos")
 
 
 class Payment(Base):
@@ -87,7 +100,6 @@ class Sandwich(Base):
     order_details = relationship("OrderDetail", back_populates="sandwich")
 
 
-
 class Recipe(Base):
     __tablename__ = "recipes"
 
@@ -99,4 +111,3 @@ class Recipe(Base):
 
     sandwich = relationship("Sandwich", back_populates="recipes")
     resource = relationship("Resource", back_populates="recipes")
-    
